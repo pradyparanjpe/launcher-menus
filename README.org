@@ -1,0 +1,59 @@
+#+TITLE: launcher-menus
+#+AUTHOR: Pradyumna Paranjape
+#+EMAIL: pradyparanjpe@rediffmail.com
+#+LANGUAGE: en
+#+OPTIONS: toc: t mathjax:t TeX:t num:t ::t :todo:nil tags:nil *:t skip:t
+#+STARTUP: overview
+#+PROPERTY: header-args :tangle t
+
+* Usage
+** Call menu
+   - Call menu launchers [dmenu, bemenu, <others>] from python
+   - Import in your script
+   #+begin_src python :tangle no
+     from launcher_menus import menu as bemenu
+     user_letter = bemenu(command='bemenu', opts=['a', 'b', 'c', 'd'])
+     if user_letter is not None:
+         # user did not hit <Esc>
+         print(user_letter)
+   #+end_src
+
+   Results:
+   #+RESULTS:
+   : a
+
+** What does it do
+   - Runs a subprocess for the selected menu and returns its standard output or None
+
+* Installation
+** pip
+   Preferred method
+   =pip install launcher-menus=
+
+** [[https://github.com/pradyparanjpe/pspman][pspman]]
+   For automated management: pre-release updates, etc
+   =pspman -s -i https://github.com/pradyparanjpe/launcher-menus.git=
+
+* Uninstallation
+** pip
+   =pip uninstall -y launcher-menus=
+
+** pspman
+   Remove installation
+   =pip uninstall -y launcher-menus=
+
+   Remove repository clone
+   =pspman -s -d launcher-menus=
+
+* Configuration
+  - <menu>.yml files bear flags corresponding to actions for <menu>
+  - <menu>.yml files are located in =<installation path>/site-packages/launcher_menus/menu-cfgs/=
+
+** Configuration format
+   - Copy [[launcher_menus/menu-cfgs/template.yml][template]] to =menu-cfgs/<your-menu>.yml=
+   - edit fields
+
+* TODO
+   - Configure rofi
+   - Configure wofi (dead project?)
+   - Configure others as issues arise
