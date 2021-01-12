@@ -86,7 +86,7 @@ What does it do
 ---------------
 
 -  Runs a subprocess for the selected menu and returns its standard
-   output or None
+   output or ``None``
 
 Configuration
 =============

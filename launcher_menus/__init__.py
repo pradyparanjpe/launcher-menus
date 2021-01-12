@@ -25,7 +25,6 @@ Launcher menu wrapper.
 Tries to provide an api for launcher menus such as:
     * dmenu
     * bemenu
-    * cusotm
 
 Can be extended to other menus:
     * Populate its <menu>.yml config file from template.yml OR
