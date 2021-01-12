@@ -23,12 +23,13 @@
 Launcher menu wrapper.
 
 Tries to provide an api for launcher menus such as:
-    dmenu
-    bemenu
+    * dmenu
+    * bemenu
+    * cusotm
 
 Can be extended to other menus:
-    Populate its <menu>.yml config file from template.yml OR
-    Supply flags through kwargs['flags'] to menu function
+    * Populate its <menu>.yml config file from template.yml OR
+    * Supply flags through kwargs['flags'] to menu function.
 '''
 
 
@@ -37,9 +38,14 @@ import subprocess
 from .read_config import flag_names_from_file
 
 
-def check_installations() -> None:
+def check_installations() -> typing.Dict[str, dict]:
     '''
-    check available installations
+    check available installations:
+    fetch <menu>.yml configurations [bemenu, dmenu],
+    look for system-executable <menu>
+
+    Returns:
+        <menu>: configuration for menus available in system & yaml.
     '''
     known_menus = flag_names_from_file()
     avail_menus: typing.Dict[str, dict] = {}
@@ -74,4 +80,4 @@ __all__ = [
     'MENUS'
 ]
 
-__version__ = '21.1.9'
+__version__ = '21.1.12'

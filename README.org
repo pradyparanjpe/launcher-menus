@@ -6,25 +6,6 @@
 #+STARTUP: overview
 #+PROPERTY: header-args :tangle t
 
-* Usage
-** Call menu
-   - Call menu launchers [dmenu, bemenu, <others>] from python
-   - Import in your script
-   #+begin_src python :tangle no
-     from launcher_menus import menu as bemenu
-     user_letter = bemenu(command='bemenu', opts=['a', 'b', 'c', 'd'])
-     if user_letter is not None:
-         # user did not hit <Esc>
-         print(user_letter)
-   #+end_src
-
-   Results:
-   #+RESULTS:
-   : a
-
-** What does it do
-   - Runs a subprocess for the selected menu and returns its standard output or None
-
 * Installation
 ** pip
    Preferred method
@@ -44,6 +25,25 @@
 
    Remove repository clone
    =pspman -s -d launcher-menus=
+
+* Usage
+** Call menu
+   - Call menu launchers [dmenu, bemenu, <others>] from python
+   - Import in your script
+   #+begin_src python :tangle no
+     from launcher_menus import menu as bemenu
+     user_letter = bemenu(command='bemenu', opts=['a', 'b', 'c', 'd'])
+     if user_letter is not None:
+         # user did not hit <Esc>
+         print(user_letter)
+   #+end_src
+
+   Results:
+   #+RESULTS:
+   : a
+
+** What does it do
+   - Runs a subprocess for the selected menu and returns its standard output or None
 
 * Configuration
   - <menu>.yml files bear flags corresponding to actions for <menu>

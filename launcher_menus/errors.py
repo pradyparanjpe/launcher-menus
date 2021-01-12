@@ -20,24 +20,30 @@
 
 
 '''
-classes and functions
+Menu errors
 '''
 
 from . import MENUS
 
 
 class MenuError(Exception):
-    '''<menu> errors Base'''
+    '''
+    <MENU> errors Base.
+    '''
     pass
 
 
 class FlagNameNotFoundError(MenuError):
     '''
-    flag not found for <menu>:
-    in menu-cfgs/<menu>.yml
-    nor provided via kwargs['flags']
+    Flag not found for <menu> in menu-cfgs/<menu>.yml,
+    nor provided via kwargs['flags'].
+
+    Args:
+        command: command that was unsed as <menu>.
+        flag: clag that was not identified from yml file.
+
     '''
-    def __init__(self, command, flag) -> None:
+    def __init__(self, command: str, flag: str) -> None:
         super(MenuError, self).__init__(
             f'''
             flag name for '{flag}' of {command} was not found
@@ -48,9 +54,16 @@ class FlagNameNotFoundError(MenuError):
 
 
 class CommandError(MenuError):
-    '''<Menu> command failed'''
+    '''
+    <MENU> command failed.
 
-    def __init__(self, args, err) -> None:
+    Args:
+        args: args called with <menu> command.
+        err: error raised by <menu> command.
+
+    '''
+
+    def __init__(self, args: list, err: str) -> None:
         super(CommandError, self).__init__(
             f'''
             Bad menu command {args}:
@@ -64,9 +77,15 @@ class CommandError(MenuError):
 
 
 class UsageError(MenuError):
-    '''<Menu> usage failed'''
+    '''
+    Usage error described by <menu> command.
 
-    def __init__(self, args, err) -> None:
+    Args:
+        args: args called with <menu> command.
+        err: error raised by <menu> command.
+    '''
+
+    def __init__(self, args: list, err: str) -> None:
         super(UsageError, self).__init__(
             f'''
             Bad menu usage {args}:

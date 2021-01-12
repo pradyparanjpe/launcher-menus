@@ -17,11 +17,8 @@
 # You should have received a copy of the GNU General Public License
 # along with launcher-menus.  If not, see <https://www.gnu.org/licenses/>.
 #
-
-
-
 '''
-read configurations
+Load configurations
 '''
 
 
@@ -32,13 +29,12 @@ import yaml
 
 def flag_names_from_file() -> typing.Dict[str, dict]:
     '''
-    command: str = command to be called as menu [dmenu, bemenu]
+    Fish out specific flag names from known config files located in menu-cfg.
 
     Returns:
-        flag_name: command- specific dictionary containing  k: action, v: flag
-        flag_name: empty dictionary if that config file was not found
+        flag_name: command- specific dictionary containing- k: action, v: flag.
+        flag_name: empty dictionary if that config file was not found.
 
-    fish out specific flag names from known config files located in menu-cfg
     '''
     known_menus: typing.Dict[str, dict] = {}
     cfg_dir = os.path.join(os.path.dirname(__file__), 'menu-cfgs')
