@@ -151,9 +151,13 @@ def menu(
 
     if config_yml is not None and pathlib.Path(config_yml).exists():
         with open(config_yml, 'r') as yml_handle:
-            flag_name |= yaml.safe_load(yml_handle)
+            flag_name.update(yaml.safe_load(yml_handle))
+            # NEXT: in python3.9, the following
+            # flag_name |= yaml.safe_load(yml_handle)
 
-    flag_name |= flags
+    flag_name.update(flags)
+    # NEXT: in python3.9, the following
+    # flag_name |= flags
 
     if not flag_name:
         raise FlagNameNotFoundError(command, 'any flag')
