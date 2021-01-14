@@ -30,7 +30,6 @@ class MenuError(Exception):
     '''
     <MENU> errors Base.
     '''
-    pass
 
 
 class FlagNameNotFoundError(MenuError):
@@ -43,8 +42,9 @@ class FlagNameNotFoundError(MenuError):
         flag: clag that was not identified from yml file.
 
     '''
+
     def __init__(self, command: str, flag: str) -> None:
-        super(MenuError, self).__init__(
+        super().__init__(
             f'''
             flag name for '{flag}' of {command} was not found
             in supplied 'flags' dictionary or
@@ -64,7 +64,7 @@ class CommandError(MenuError):
     '''
 
     def __init__(self, args: list, err: str) -> None:
-        super(CommandError, self).__init__(
+        super().__init__(
             f'''
             Bad menu command {args}:
 
@@ -86,7 +86,7 @@ class UsageError(MenuError):
     '''
 
     def __init__(self, args: list, err: str) -> None:
-        super(UsageError, self).__init__(
+        super().__init__(
             f'''
             Bad menu usage {args}:
 

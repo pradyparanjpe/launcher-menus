@@ -24,9 +24,9 @@ menu function
 
 import re
 import typing
-import yaml
-import subprocess
 import pathlib
+import subprocess
+import yaml
 from . import MENUS
 from .errors import FlagNameNotFoundError, CommandError, UsageError
 
@@ -35,9 +35,9 @@ def process_comm(cmd: list, pipe_inputs: str = '',
                  timeout: float = None, **kwargs) -> str:
     '''
     Args:
-        cmd: list = list form of commands to be passed to Popen as args
-        pipe_inputs: str = inputs to be passed as stdin
-        timeout: floa: timeout of communication in seconds
+        cmd: list form of commands to be passed to Popen as args
+        pipe_inputs: inputs to be passed as stdin
+        timeout: timeout of communication in seconds
         **kwargs: passed to Popen
 
     Raises:
@@ -58,9 +58,9 @@ def process_comm(cmd: list, pipe_inputs: str = '',
             **kwargs
             )
     except OSError as err:
-        raise CommandError(cmd, err)
+        raise CommandError(cmd, err) from err
 
-    stdout, stderr = proc.communicate(input=pipe_inputs)
+    stdout, stderr = proc.communicate(input=pipe_inputs, timeout=timeout)
     if stderr:
         if re.match('usage', stderr, re.I):
             raise UsageError(cmd, stderr)
@@ -68,39 +68,8 @@ def process_comm(cmd: list, pipe_inputs: str = '',
     return stdout.rstrip('\n')
 
 
-def menu(
-        opts: typing.List[str] = [],
-        command: str = list(MENUS.keys())[0],
-        bottom: bool = False,
-        grab: bool = False,
-        ignorecase: bool = False,
-        wrap: bool = False,
-        ifne: bool = False,
-        nooverlap: bool = False,
-        lines: int = None,
-        monitor: typing.Union[str, int] = None,
-        height: int = None,
-        prompt: str = None,
-        prefix: str = None,
-        index: int = None,
-        scrollbar: str = None,
-        font: str = None,
-        title_background: str = None,
-        title_foreground: str = None,
-        normal_background: str = None,
-        normal_foreground: str = None,
-        filter_background: str = None,
-        filter_foreground: str = None,
-        high_background: str = None,
-        high_foreground: str = None,
-        scroll_background: str = None,
-        scroll_foreground: str = None,
-        selected_background: str = None,
-        selected_foreground: str = None,
-        windowid: str = None,
-        config_yml: str = None,
-        **flags: str,
-) -> str:
+def menu(opts: typing.List[str] = None, command: str = list(MENUS.keys())[0],
+         config_yml: str = None, **flags: str) -> str:
     '''
     Call <command> menu to collect interactive information.
 
@@ -116,9 +85,9 @@ def menu(
         lines: list opts on vertical 'lines'
         monitor: show menu on (bemenu w/ wayland: -1: all)
         height: height of each menu line (bemenu)
+        index: select index automatically (bemenu)
         prompt: prompt string of menu
         prefix: prefix added highlighted item (bemenu)
-        index: select index automatically (bemenu)
         scrollbar: display scrollbar [none, always, autohide] (bemenu)
         font: font to be used format: "FONT-NAME [SIZE (bemenu)]"
         title_background: #RRGGBB title background color (bemenu)
@@ -147,6 +116,45 @@ def menu(
         User's selected or overridden-entered opt else None [Esc]
 
     '''
+    bool_kwargs: typing.Dict[str, bool] = {
+        'bottom': None,
+        'grab': None,
+        'ignorecase': None,
+        'wrap': None,
+        'ifne': None,
+        'nooverlap': None,
+    }
+
+    input_kwargs: typing.Dict[str, str] = {
+        'lines': None,
+        'monitor': None,  # may be str, doesn't harm
+        'height': None,
+        'index': None,
+        'prompt': None,
+        'prefix': None,
+        'scrollbar': None,
+        'font': None,
+        'title_background': None,
+        'title_foreground': None,
+        'normal_background': None,
+        'normal_foreground': None,
+        'filter_background': None,
+        'filter_foreground': None,
+        'high_background': None,
+        'high_foreground': None,
+        'scroll_background': None,
+        'scroll_foreground': None,
+        'selected_background': None,
+        'selected_foreground': None,
+        'windowid': None,
+    }
+
+    # parse bool_kwargs
+    for key in {**bool_kwargs, **input_kwargs}:
+        if key in flags:
+            bool_kwargs[key] = flags[key]
+            del flags[key]
+
     flag_name = MENUS.get(command) or {}
 
     if config_yml is not None and pathlib.Path(config_yml).exists():
@@ -165,98 +173,25 @@ def menu(
     cmd = [command]
 
     try:
-        if bottom:
-            cmd.append(flag_name['bottom'])
+        for key, value in bool_kwargs.items():
+            if value is not None:
+                cmd.append(flag_name[key])
 
-        if grab:
-            cmd.append(flag_name['grab'])
-
-        if ignorecase:
-            cmd.append(flag_name['ignorecase'])
-
-        # bemenu
-        if wrap:
-            cmd.append(flag_name['wrap'])
-
-        if ifne:
-            cmd.append(flag_name['ifne'])
-
-        if nooverlap:
-            cmd.append(flag_name['nooverlap'])
-
-        if lines is not None:
-            cmd.extend((flag_name['lines'], str(lines)))
-
-        if monitor is not None:
-            cmd.extend((flag_name['monitor'], str(monitor)))
-
-        if height is not None:
-            cmd.extend((flag_name['height'], str(height)))
-
-        if prompt is not None:
-            cmd.extend((flag_name['prompt'], prompt))
-
-        # bemenu
-        if prefix is not None:
-            cmd.extend((flag_name['prefix'], prefix))
-
-        if index is not None:
-            cmd.extend((flag_name['index'], index))
-
-        if scrollbar is not None:
-            if scrollbar not in ['none', 'always', 'autohide']:
-                raise ValueError(
-                    f"""
-                    scrollbar should be in ['none', 'always', 'autohide'],
-                    got {scrollbar}
-                    """
-                )
-            cmd.extend((flag_name['scrollbar'], scrollbar))
-
-        if font is not None:
-            cmd.extend((flag_name['font'], font))
-
-        if title_background is not None:
-            cmd.extend((flag_name['title background'], title_background))
-
-        if title_foreground is not None:
-            cmd.extend((flag_name['title foreground'], title_foreground))
-
-        if normal_background is not None:
-            cmd.extend((flag_name['normal background'], normal_background))
-
-        if normal_foreground is not None:
-            cmd.extend((flag_name['normal foreground'], normal_foreground))
-
-        if filter_background is not None:
-            cmd.extend((flag_name['filter background'], filter_background))
-
-        if filter_foreground is not None:
-            cmd.extend((flag_name['filter foreground'], filter_foreground))
-
-        if high_background is not None:
-            cmd.extend((flag_name['high background'], high_background))
-
-        if high_foreground is not None:
-            cmd.extend((flag_name['high foreground'], high_foreground))
-
-        if scroll_background is not None:
-            cmd.extend((flag_name['scroll background'], scroll_background))
-
-        if scroll_foreground is not None:
-            cmd.extend((flag_name['scroll foreground'], scroll_foreground))
-
-        if selected_background is not None:
-            cmd.extend((flag_name['selected background'], selected_background))
-
-        if selected_foreground is not None:
-            cmd.extend((flag_name['selected foreground'], selected_foreground))
-
-        # dmenu
-        if windowid is not None:
-            cmd.extend((flag_name['windowid'], str(windowid)))
+        for key, value in input_kwargs.items():
+            if value is not None:
+                if key == 'scrollbar' and value not in ['none',
+                                                        'always', 'autohide']:
+                    raise ValueError(
+                        f"""
+                        scrollbar should be in ['none', 'always', 'autohide'],
+                        got {value}
+                        """
+                    )
+                cmd.extend((flag_name[key], str(value)))
 
     except KeyError as err:
-        raise FlagNameNotFoundError(command, err.args[0])
+        raise FlagNameNotFoundError(command, err.args[0]) from err
 
+    if opts is None:
+        opts = []
     return process_comm(cmd, pipe_inputs='\n'.join(opts)) or None

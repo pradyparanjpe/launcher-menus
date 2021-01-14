@@ -1,10 +1,4 @@
 # autodoc
+
 sphinx
 sphinx_rtd_theme
-sphinxcontrib-applehelp
-sphinxcontrib-devhelp
-sphinxcontrib-htmlhelp
-sphinxcontrib-jsmath
-sphinxcontrib-qthelp
-sphinxcontrib-serializinghtml
-../launcher_menus
