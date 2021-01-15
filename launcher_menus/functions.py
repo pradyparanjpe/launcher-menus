@@ -150,9 +150,14 @@ def menu(opts: typing.List[str] = None, command: str = list(MENUS.keys())[0],
     }
 
     # parse bool_kwargs
-    for key in {**bool_kwargs, **input_kwargs}:
+    for key in bool_kwargs:
         if key in flags:
             bool_kwargs[key] = flags[key]
+            del flags[key]
+
+    for key in input_kwargs:
+        if key in flags:
+            input_kwargs[key] = flags[key]
             del flags[key]
 
     flag_name = MENUS.get(command) or {}
