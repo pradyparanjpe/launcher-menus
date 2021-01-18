@@ -18,6 +18,14 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+
+Documentation
+=============
+
+.. image:: https://readthedocs.org/projects/launcher-menus/badge/?version=latest
+   :target: https://launcher-menus.readthedocs.io/?badge=latest
+            :alt: Documentation Status
+
 Description
 ===========
 

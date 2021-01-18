@@ -142,3 +142,6 @@ pypi.sh
 
 # built documentation
 docs/_*
+
+# Original README.org -> pandoc -> README.md
+README.org
