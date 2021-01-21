@@ -49,7 +49,7 @@ def check_installations() -> typing.Dict[str, dict]:
     known_menus = flag_names_from_file()
     avail_menus: typing.Dict[str, dict] = {}
     for menu_cmd, flags in known_menus.items():
-        if not subprocess.call(['command', '-v', menu_cmd],
+        if not subprocess.call(['builtin', 'command', '-v', menu_cmd],
                                stdout=subprocess.DEVNULL,
                                stderr=subprocess.DEVNULL):
             # call didn't return an exit-code
