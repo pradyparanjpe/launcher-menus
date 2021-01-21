@@ -46,6 +46,7 @@ def process_comm(cmd: list, pipe_inputs: str = '',
 
     Return
         stdout: str: returned by process
+
     '''
     try:
         proc = subprocess.Popen(
@@ -69,42 +70,42 @@ def process_comm(cmd: list, pipe_inputs: str = '',
 
 
 def menu(opts: typing.List[str] = None, command: str = None,
-         config_yml: str = None, **flags: str) -> str:
+         config_yml: str = None, **flags) -> str:
     '''
     Call <command> menu to collect interactive information.
 
     Args:
-        opts: options to be offerred by menu.
-        command: command to use [dmenu, bemenu, <other>]
-        bottom: show bar at bottom
-        grab: show menu before reading stdin (faster)
-        ignorecase: match items ignoring case
-        wrap: wrap cursor selection (only for bemenu)
-        ifne: display only if opts (bemenu)
-        nooverlap: do not overlap panels (bemenu w/ wayland)
-        lines: list opts on vertical 'lines'
-        monitor: show menu on (bemenu w/ wayland: -1: all)
-        height: height of each menu line (bemenu)
-        index: select index automatically (bemenu)
-        prompt: prompt string of menu
-        prefix: prefix added highlighted item (bemenu)
-        scrollbar: display scrollbar [none, always, autohide] (bemenu)
-        font: font to be used format: "FONT-NAME [SIZE (bemenu)]"
-        title_background: #RRGGBB title background color (bemenu)
-        title_foreground:  #RRGGBB title foreground color (bemenu)
-        normal_background: #RRGGBB normal background color
-        normal_foreground: #RRGGBB normal foreground color
-        filter_background: #RRGGBB filter background color (bemenu)
-        filter_foreground: #RRGGBB filter foreground color (bemenu)
-        high_background: #RRGGBB highlight background color (bemenu)
-        high_foreground: #RRGGBB highlight foreground color (bemenu)
-        scroll_background: #RRGGBB scrollbar background color (bemenu)
-        scroll_foreground: #RRGGBB scrollbar foreground color (bemenu)
-        selected_background: #RRGGBB selected background color
-        selected_foreground: #RRGGBB selected foreground color
-        windowid: embed into windowid (dmenu)
+        opts: list: options to be offerred by menu.
+        command: command to use {dmenu,bemenu,<custom>}
+        bottom: bool: show bar at bottom
+        grab: bool: show menu before reading stdin (faster)
+        ignorecase: bool: match items ignoring case
+        wrap: bool: wrap cursor selection (only for bemenu)
+        ifne: bool: display only if opts (bemenu)
+        nooverlap: bool: do not overlap panels (bemenu w/ wayland)
+        lines: int: list opts on vertical 'lines'
+        monitor: int: show menu on (bemenu w/ wayland: -1: all)
+        height: int: height of each menu line (bemenu)
+        index: int: select index automatically (bemenu)
+        prompt: str: prompt string of menu
+        prefix: str: prefix added highlighted item (bemenu)
+        scrollbar: str: display scrollbar [none, always, autohide] (bemenu)
+        font: str: font to be used format: "FONT-NAME [SIZE (bemenu)]"
+        title_background: str: #RRGGBB title background color (bemenu)
+        title_foreground: str:  #RRGGBB title foreground color (bemenu)
+        normal_background: str: #RRGGBB normal background color
+        normal_foreground: str: #RRGGBB normal foreground color
+        filter_background: str: #RRGGBB filter background color (bemenu)
+        filter_foreground: str: #RRGGBB filter foreground color (bemenu)
+        high_background: str: #RRGGBB highlight background color (bemenu)
+        high_foreground: str: #RRGGBB highlight foreground color (bemenu)
+        scroll_background: str: #RRGGBB scrollbar background color (bemenu)
+        scroll_foreground: str: #RRGGBB scrollbar foreground color (bemenu)
+        selected_background: str: #RRGGBB selected background color
+        selected_foreground: str: #RRGGBB selected foreground color
+        windowid: str: embed into windowid (dmenu)
         config_yml: path of yaml config file. Extends and overrides default.
-        **flags: flagname='--flag' for <command>. Overrides config files.
+        **flags: flagname='--flag' for ``command``. Overrides config files.
 
     Raises:
         CommandError
