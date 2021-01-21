@@ -28,7 +28,7 @@ Tries to provide an api for launcher menus such as:
 
 Can be extended to other menus:
     * Populate its <menu>.yml config file from template.yml OR
-    * Supply flags through kwargs['flags'] to menu function.
+    * Supply flags through kwargs['flags'] to ``menu`` function.
 '''
 
 
@@ -45,7 +45,7 @@ def check_installations() -> typing.Dict[str, dict]:
     look for system-executable <menu>
 
     Returns:
-        <menu>: configuration for menus available in system & yaml.
+        {<menu>: configuration} for menus available in system & yaml.
 
     Raises:
         FileNotFoundError: no launcher menus could be located

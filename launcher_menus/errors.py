@@ -35,11 +35,11 @@ class MenuError(Exception):
 class FlagNameNotFoundError(MenuError):
     '''
     Flag not found for <menu> in menu-cfgs/<menu>.yml,
-    nor provided via kwargs['flags'].
+    nor provided via ``**flags`` or ``config_yml``.
 
     Args:
         command: command that was unsed as <menu>.
-        flag: clag that was not identified from yml file.
+        flag: flag that was not identified from yml file.
 
     '''
 
@@ -47,8 +47,9 @@ class FlagNameNotFoundError(MenuError):
         super().__init__(
             f'''
             flag name for '{flag}' of {command} was not found
-            in supplied 'flags' dictionary or
-            in the configuration file {command}.yml
+            in '**flags'
+            nor in the supplied 'config_yml' (if any)
+            nor in default configuration file {command}.yml (if any)
             '''
         )
 

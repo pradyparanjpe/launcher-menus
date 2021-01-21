@@ -26,6 +26,7 @@ import re
 import typing
 import pathlib
 import subprocess
+import warnings
 import yaml
 from . import MENUS
 from .errors import FlagNameNotFoundError, CommandError, UsageError
@@ -105,7 +106,7 @@ def menu(opts: typing.List[str] = None, command: str = None,
         selected_foreground: str: #RRGGBB selected foreground color
         windowid: str: embed into windowid (dmenu)
         config_yml: path of yaml config file. Extends and overrides default.
-        **flags: flagname='--flag' for ``command``. Overrides config files.
+        **flags: action='--flag' for ``command``. Extends and overrides config.
 
     Raises:
         CommandError
@@ -114,7 +115,7 @@ def menu(opts: typing.List[str] = None, command: str = None,
         ValueError: bad scrollbar options
 
     Returns:
-        User's selected or overridden-entered opt else None [Esc]
+        User's selected or overridden-entered opt from ``opts`` else None [Esc]
 
     '''
     bool_kwargs: typing.Dict[str, bool] = {
@@ -156,35 +157,44 @@ def menu(opts: typing.List[str] = None, command: str = None,
             bool_kwargs[key] = flags[key]
             del flags[key]
 
+    # parse input_kwargs
     for key in input_kwargs:
         if key in flags:
             input_kwargs[key] = flags[key]
             del flags[key]
 
+    # Default command
     if command is None:
         command = list(MENUS.keys())[0]
 
     flag_name = MENUS.get(command) or {}
 
+    # Override default config by supplied config
     if config_yml is not None and pathlib.Path(config_yml).exists():
         with open(config_yml, 'r') as yml_handle:
             flag_name.update(yaml.safe_load(yml_handle))
             # NEXT: in python3.9, the following
             # flag_name |= yaml.safe_load(yml_handle)
 
+    # Override config by supplied flags
     flag_name.update(flags)
     # NEXT: in python3.9, the following
     # flag_name |= flags
 
+    # still empty?
     if not flag_name:
-        raise FlagNameNotFoundError(command, 'any flag')
+        warnings.warn('No flags found in config nor supplied')
+
     cmd = [command]
 
     try:
+
+        # boolean flags
         for key, value in bool_kwargs.items():
             if value is not None:
                 cmd.append(flag_name[key])
 
+        # input flags
         for key, value in input_kwargs.items():
             if value is not None:
                 if key == 'scrollbar' and value not in ['none',

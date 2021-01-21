@@ -19,6 +19,21 @@ Indices and tables
 * :ref:`search`
 
 
+Description
+===========
+
+Launcher menu wrapper.
+
+Provides an API for launcher menus such as:
+
+  - `dmenu <https://tools.suckless.org/dmenu/>`__
+  - `bemenu <https://github.com/Cloudef/bemenu>`__
+
+Can be extended to other menus:
+
+  - Create its <menu>.yml config file from template.yml OR
+  - Supply flags through ``**flags`` to ``menu`` function.
+
 Documentation
 =============
 
@@ -26,26 +41,18 @@ Documentation
    :target: https://launcher-menus.readthedocs.io/?badge=latest
             :alt: Documentation Status
 
-Description
-===========
-
-.. automodule:: launcher_menus
-
 Installation
 ============
 
 pip
 ---
 
-Preferred method
-
-``pip install launcher-menus``
+Preferred method ``pip install -U launcher-menus``
 
 `pspman <https://github.com/pradyparanjpe/pspman>`__
 ----------------------------------------------------
 
 For automated management: pre-release updates, etc
-
 ``pspman -s -i https://github.com/pradyparanjpe/launcher-menus.git``
 
 Uninstallation
@@ -101,13 +108,54 @@ Configuration
 
 -  <menu>.yml files bear flags corresponding to actions for <menu>
 -  <menu>.yml files are located in
-   ``<installation path>/site-packages/launcher_menus/menu-cfgs/``
+   ``<installation path>/site-packages/launcher_menus/``\ `menu-cfgs <launcher_menus/menu-cfgs>`__
 
 Configuration format
 --------------------
 
--  Copy *template* to ``menu-cfgs/<your-menu>.yml``
--  edit fields
+-  Copy `template <launcher_menus/menu-cfgs/template.yml>`__ to
+   `menu-cfgs <launcher_menus/menu-cfgs>`__\ ``/<menu.yml>``
+-  Edit fields to provide flags:
+-  Example:
+
+::
+
+   bottom: -b
+   prompt: --prompt
+
+template.yml
+~~~~~~~~~~~~
+
+.. code:: yaml
+
+   version:
+   bottom:
+   grab:
+   ignorecase:
+   wrap:
+   ifne:
+   nooverlap:
+   lines:
+   monitor:
+   height:
+   prompt:
+   prefix:
+   index:
+   scrollbar:
+   font:
+   title background:
+   title foreground:
+   normal background:
+   normal foreground:
+   filter background:
+   filter foreground:
+   high background:
+   high foreground:
+   scroll background:
+   scroll foreground:
+   selected background:
+   selected foreground:
+   windowid:
 
 TODO
 ====
