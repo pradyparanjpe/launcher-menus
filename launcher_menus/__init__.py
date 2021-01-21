@@ -22,13 +22,6 @@
 '''
 Launcher menu wrapper.
 
-Tries to provide an api for launcher menus such as:
-    * dmenu
-    * bemenu
-
-Can be extended to other menus:
-    * Populate its <menu>.yml config file from template.yml OR
-    * Supply flags through kwargs['flags'] to ``menu`` function.
 '''
 
 

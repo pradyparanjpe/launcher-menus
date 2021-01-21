@@ -166,20 +166,8 @@ TODO
 
 
 
-methods
-=======
-
-menu
-------
-
-.. autofunction:: launcher_menus.menu
-
-check_installations
--------------------
-
-.. autofunction:: launcher_menus.check_installations
-
-Errors
-------
-.. automodule:: launcher_menus.errors
+launcher-menus
+==============
+.. automodule:: launcher_menus
    :members:
+
