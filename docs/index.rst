@@ -4,7 +4,7 @@
    contain the root `toctree` directive.
 
 Welcome to launcher-menus' documentation!
-==========================================
+=========================================
 
 .. toctree::
    :maxdepth: 2
