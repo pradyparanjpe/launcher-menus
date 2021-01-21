@@ -18,152 +18,35 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
+-----------------------------------------
 
-Description
-===========
+.. mdinclude:: ../README.md
 
-Launcher menu wrapper.
+-----------------------------------------
 
-Provides an API for launcher menus such as:
-
-  - `dmenu <https://tools.suckless.org/dmenu/>`__
-  - `bemenu <https://github.com/Cloudef/bemenu>`__
-
-Can be extended to other menus:
-
-  - Create its <menu>.yml config file from template.yml OR
-  - Supply flags through ``**flags`` to ``menu`` function.
-
-Documentation
-=============
-
-.. image:: https://readthedocs.org/projects/launcher-menus/badge/?version=latest
-   :target: https://launcher-menus.readthedocs.io/?badge=latest
-            :alt: Documentation Status
 
 Installation
 ============
 
-pip
----
+.. mdinclude:: ../INSTALL.md
 
-Preferred method ``pip install -U launcher-menus``
+-----------------------------------------
 
-`pspman <https://github.com/pradyparanjpe/pspman>`__
-----------------------------------------------------
-
-For automated management: pre-release updates, etc
-``pspman -s -i https://github.com/pradyparanjpe/launcher-menus.git``
-
-Uninstallation
-==============
-
-.. _pip-1:
-
-pip
----
-
-``pip uninstall -y launcher-menus``
-
-.. _pspman-1:
-
-pspman
-------
-
-Remove installation ``pip uninstall -y launcher-menus``
-
-Remove repository clone ``pspman -s -d launcher-menus``
 
 Usage
 =====
 
-Call menu
----------
+.. include:: usage.rst
 
--  Call menu launchers [dmenu, bemenu, <others>] from python
--  Import in your script
+-----------------------------------------
 
-.. code:: python
-
-   from launcher_menus import menu as bemenu
-   user_letter = bemenu(command='bemenu', opts=['a', 'b', 'c', 'd'])
-   if user_letter is not None:
-       # user did not hit <Esc>
-       print(user_letter)
-
-Results:
-
-::
-
-   a
-
-What does it do
----------------
-
--  Runs a subprocess for the selected menu and returns its standard
-   output or ``None``
 
 Configuration
 =============
 
--  <menu>.yml files bear flags corresponding to actions for <menu>
--  <menu>.yml files are located in
-   ``<installation path>/site-packages/launcher_menus/``\ `menu-cfgs <launcher_menus/menu-cfgs>`__
+.. include:: configuration.rst
 
-Configuration format
---------------------
-
--  Copy `template <launcher_menus/menu-cfgs/template.yml>`__ to
-   `menu-cfgs <launcher_menus/menu-cfgs>`__\ ``/<menu.yml>``
--  Edit fields to provide flags:
--  Example:
-
-::
-
-   bottom: -b
-   prompt: --prompt
-
-template.yml
-~~~~~~~~~~~~
-
-.. code:: yaml
-
-   version:
-   bottom:
-   grab:
-   ignorecase:
-   wrap:
-   ifne:
-   nooverlap:
-   lines:
-   monitor:
-   height:
-   prompt:
-   prefix:
-   index:
-   scrollbar:
-   font:
-   title_background:
-   title_foreground:
-   normal_background:
-   normal_foreground:
-   filter_background:
-   filter_foreground:
-   high_background:
-   high_foreground:
-   scroll_background:
-   scroll_foreground:
-   selected_background:
-   selected_foreground:
-   windowid:
-
-TODO
-====
-
--  Configure rofi
--  Configure wofi (dead project?)
--  Configure others as issues arise
-
+=========================================
 
 
 launcher-menus
@@ -171,3 +54,9 @@ launcher-menus
 .. automodule:: launcher_menus
    :members:
 
+=========================================
+
+TODO
+=====
+
+.. include:: todo.rst

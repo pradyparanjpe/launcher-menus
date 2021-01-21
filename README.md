@@ -4,132 +4,28 @@ Description
 Launcher menu wrapper.
 
 Provides an API for launcher menus such as:
-  - [dmenu](https://tools.suckless.org/dmenu/)
-  - [bemenu](https://github.com/Cloudef/bemenu)
 
-Can be extended to other menus:
-  - Create its \<menu\>.yml config file from template.yml OR
-  - Supply flags through ``**flags`` to ``menu`` function.
+- [dmenu](https://tools.suckless.org/dmenu/)
+- [bemenu](https://github.com/Cloudef/bemenu)
+
+Can be extended to other menus: see section `configuration`
+
 
 Documentation
 =============
 
 [![Documentation Status](https://readthedocs.org/projects/launcher-menus/badge/?version=latest)](https://launcher-menus.readthedocs.io/?badge=latest)
 
-Installation
-============
+Source Code
+===========
 
-pip
----
+[![source](https://github.githubassets.com/favicons/favicon.png)](https://github.com/pradyparanjpe/launcher-menus.git)
+[Repository](https://github.com/pradyparanjpe/launcher-menus.git)
 
-Preferred method `pip install launcher-menus`
-
-[pspman](https://github.com/pradyparanjpe/pspman)
--------------------------------------------------
-
-For automated management: pre-release updates, etc
-`pspman -s -i https://github.com/pradyparanjpe/launcher-menus.git`
-
-Uninstallation
-==============
-
-pip
----
-
-`pip uninstall -y launcher-menus`
-
-pspman
-------
-
-Remove installation `pip uninstall -y launcher-menus`
-
-Remove repository clone `pspman -s -d launcher-menus`
-
-Usage
-=====
-
-Call menu
----------
-
--   Call menu launchers \[dmenu, bemenu, \<others\>\] from python
--   Import in your script
-
-``` {.python tangle="no"}
-from launcher_menus import menu as bemenu
-user_letter = bemenu(command='bemenu', opts=['a', 'b', 'c', 'd'])
-if user_letter is not None:
-    # user did not hit <Esc>
-    print(user_letter)
-```
-
-Results:
-
-``` {.example}
-a
-```
 
 What does it do
 ---------------
 
--   Runs a subprocess for the selected menu and returns its standard
+-   Runs a subprocess for the selected ``<menu>`` and returns its standard
     output or ``None``
 
-Configuration
-=============
-
--   \<menu\>.yml files bear flags corresponding to actions for \<menu\>
--   \<menu\>.yml files are located in
-    `<installation path>/site-packages/launcher_menus/`[menu-cfgs](launcher_menus/menu-cfgs)
-
-Configuration format
---------------------
-
--   Copy [template](launcher_menus/menu-cfgs/template.yml) to [menu-cfgs](launcher_menus/menu-cfgs)``/<menu>.yml``
--   Edit fields to provide flags:
-   - Example:
-   ``` {.example}
-   bottom: -b
-   prompt: --prompt
-   ```
-
-### template.yml
-
-``` {.yml}
-version:
-bottom:
-grab:
-ignorecase:
-wrap:
-ifne:
-nooverlap:
-lines:
-monitor:
-height:
-prompt:
-prefix:
-index:
-scrollbar:
-font:
-title_background:
-title_foreground:
-normal_background:
-normal_foreground:
-filter_background:
-filter_foreground:
-high_background:
-high_foreground:
-scroll_background:
-scroll_foreground:
-selected_background:
-selected_foreground:
-windowid:
-
-```
-
-
-TODO
-====
-
--   Configure rofi
--   Configure wofi (dead project?)
--   Configure others as issues arise
