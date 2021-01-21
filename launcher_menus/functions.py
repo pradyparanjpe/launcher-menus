@@ -71,13 +71,15 @@ def process_comm(cmd: list, pipe_inputs: str = '',
 
 
 def menu(opts: typing.List[str] = None, command: str = None,
-         config_yml: str = None, **flags) -> str:
+         config_yml: str = None, fail: bool = False, **flags) -> str:
     '''
     Call <command> menu to collect interactive information.
 
     Args:
         opts: list: options to be offerred by menu.
         command: command to use {dmenu,bemenu,<custom>}
+        config_yml: path of yaml config file. Extends and overrides default.
+        fail: ``True`` -> Error or ``False`` -> warn when flag is not found.
         bottom: bool: show bar at bottom
         grab: bool: show menu before reading stdin (faster)
         ignorecase: bool: match items ignoring case
@@ -105,7 +107,6 @@ def menu(opts: typing.List[str] = None, command: str = None,
         selected_background: str: #RRGGBB selected background color
         selected_foreground: str: #RRGGBB selected foreground color
         windowid: str: embed into windowid (dmenu)
-        config_yml: path of yaml config file. Extends and overrides default.
         **flags: action='--flag' for ``command``. Extends and overrides config.
 
     Raises:
@@ -187,28 +188,41 @@ def menu(opts: typing.List[str] = None, command: str = None,
 
     cmd = [command]
 
-    try:
-
-        # boolean flags
-        for key, value in bool_kwargs.items():
-            if value is not None:
+    # boolean flags
+    for key, value in bool_kwargs.items():
+        if value is not None:
+            try:
                 cmd.append(flag_name[key])
+            except KeyError as err:
+                if fail:
+                    raise FlagNameNotFoundError(command, err.args[0]) from err
+                else:
+                    warnings.warn('''
+                    flag name for '{key}' of {command} was not found
+                    but not failing
+                    ''')
 
-        # input flags
-        for key, value in input_kwargs.items():
-            if value is not None:
-                if key == 'scrollbar' and value not in ['none',
-                                                        'always', 'autohide']:
-                    raise ValueError(
-                        f"""
-                        scrollbar should be in ['none', 'always', 'autohide'],
-                        got {value}
-                        """
-                    )
+    # input flags
+    for key, value in input_kwargs.items():
+        if value is not None:
+            if key == 'scrollbar' and value not in ['none',
+                                                    'always', 'autohide']:
+                raise ValueError(
+                    f"""
+                    scrollbar should be in ['none', 'always', 'autohide'],
+                    got {value}
+                    """
+                )
+            try:
                 cmd.extend((flag_name[key], str(value)))
-
-    except KeyError as err:
-        raise FlagNameNotFoundError(command, err.args[0]) from err
+            except KeyError as err:
+                if fail:
+                    raise FlagNameNotFoundError(command, err.args[0]) from err
+                else:
+                    warnings.warn('''
+                    flag name for '{key}' of {command} was not found
+                    but not failing
+                    ''')
 
     if opts is None:
         opts = []
