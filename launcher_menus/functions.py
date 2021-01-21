@@ -68,7 +68,7 @@ def process_comm(cmd: list, pipe_inputs: str = '',
     return stdout.rstrip('\n')
 
 
-def menu(opts: typing.List[str] = None, command: str = list(MENUS.keys())[0],
+def menu(opts: typing.List[str] = None, command: str = None,
          config_yml: str = None, **flags: str) -> str:
     '''
     Call <command> menu to collect interactive information.
@@ -160,6 +160,9 @@ def menu(opts: typing.List[str] = None, command: str = list(MENUS.keys())[0],
             input_kwargs[key] = flags[key]
             del flags[key]
 
+    if command is None:
+        command = list(MENUS.keys())[0]
+
     flag_name = MENUS.get(command) or {}
 
     if config_yml is not None and pathlib.Path(config_yml).exists():
@@ -174,7 +177,6 @@ def menu(opts: typing.List[str] = None, command: str = list(MENUS.keys())[0],
 
     if not flag_name:
         raise FlagNameNotFoundError(command, 'any flag')
-
     cmd = [command]
 
     try:

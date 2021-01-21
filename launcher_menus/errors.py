@@ -71,7 +71,7 @@ class CommandError(MenuError):
             {err}
 
             Menus available:
-            {MENUS}
+            {MENUS.keys()}
             '''
         )
 

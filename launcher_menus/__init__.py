@@ -32,6 +32,7 @@ Can be extended to other menus:
 '''
 
 
+import os
 import typing
 import subprocess
 from .read_config import flag_names_from_file
@@ -45,11 +46,18 @@ def check_installations() -> typing.Dict[str, dict]:
 
     Returns:
         <menu>: configuration for menus available in system & yaml.
+
+    Raises:
+        FileNotFoundError: no launcher menus could be located
+
     '''
     known_menus = flag_names_from_file()
     avail_menus: typing.Dict[str, dict] = {}
     for menu_cmd, flags in known_menus.items():
-        if not subprocess.call(['builtin', 'command', '-v', menu_cmd],
+        if os.environ.get("READTHEDOCS"):
+            # RTD virutal environment
+            return avail_menus
+        if not subprocess.call(['command', '-v', menu_cmd],
                                stdout=subprocess.DEVNULL,
                                stderr=subprocess.DEVNULL):
             # call didn't return an exit-code
