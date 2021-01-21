@@ -13,15 +13,15 @@ prefix: --prefix
 index: --index
 scrollbar: --scrollbar
 font: --fn
-title background: --tb
-title foreground: --tf
-normal background: --nb
-normal foreground: --nf
-filter background: --fb
-filter foreground: --ff
-high background: --hb
-high foreground: --hf
-scroll background: --scb
-scroll foreground: --scf
-selected background: --sb
-selected foreground: --sf
+title_background: --tb
+title_foreground: --tf
+normal_background: --nb
+normal_foreground: --nf
+filter_background: --fb
+filter_foreground: --ff
+high_background: --hb
+high_foreground: --hf
+scroll_background: --scb
+scroll_foreground: --scf
+selected_background: --sb
+selected_foreground: --sf

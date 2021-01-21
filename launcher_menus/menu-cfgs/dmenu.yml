@@ -6,8 +6,8 @@ lines: -l
 monitor: -m
 prompt: -p
 font: -fn
-normal background: -nb
-normal foreground: -nf
-selected background: -sb
-selected foreground: -sf
+normal_background: -nb
+normal_foreground: -nf
+selected_background: -sb
+selected_foreground: -sf
 windowid: -w
