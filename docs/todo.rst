@@ -6,3 +6,4 @@ TODO
    dead?
 -  Write launcher-menu in python and integrate.
 -  Configure others as issues arise
+-  If Configuration is not found, try to create a flag using standard posix and action keywords.

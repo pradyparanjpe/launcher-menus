@@ -1,3 +1,13 @@
+Prerequisites
+---------------
+
+At least one of the following menu launchers need to be installed
+
+- [dmenu](https://tools.suckless.org/dmenu/)
+- [bemenu](https://github.com/Cloudef/bemenu)
+
+Else, a *custom* menu may be used by supplying flags as described
+
 pip
 ------
 
