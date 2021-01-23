@@ -19,7 +19,7 @@ pip install -U launcher-menus
 
 You may have to do this multiple times until a warning message informs:
 
-<span style="color:yellow">WARNING: Skipping launcher-menus as it is not installed.</span>
+<span style="background-color: black; color: yellow;">WARNING: Skipping launcher-menus as it is not installed.</span>
 
 ```sh
 pip uninstall -y launcher-menus

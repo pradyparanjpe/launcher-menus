@@ -54,6 +54,12 @@ launcher-menus
 .. automodule:: launcher_menus
    :members:
 
+menu() call
+-----------
+
+.. autofunction:: launcher_menus.LauncherMenu.__call__
+
+
 =========================================
 
 TODO

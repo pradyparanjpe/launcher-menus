@@ -20,7 +20,7 @@
 
 
 '''
-Launcher menu wrapper.
+Python API for Launcher menus
 
 '''
 
@@ -64,14 +64,24 @@ def check_installations() -> typing.Dict[str, dict]:
     return avail_menus
 
 
-MENUS = check_installations()
+MENUS: typing.Dict[str, dict] = check_installations()
+'''
+Configuration for menus known and found to be installed
+'''
 
 
 from .errors import FlagNameNotFoundError, MenuError, CommandError, UsageError
-from .functions import menu
+from .functions import LauncherMenu
 
+menu = LauncherMenu()
+'''
+Plain ``menu`` object.
+
+``command`` defaults to the first one found to be installed.
+'''
 
 __all__ = [
+    'LauncherMenu',
     'menu',
     'MenuError',
     'CommandError',

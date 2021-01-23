@@ -1,8 +1,8 @@
 Files
 -----
 
-\\<menu\>.yml files bear flags corresponding to actions for \\<menu\>,
-where \\<menu\> may be dmenu, bemenu, etc
+|menu|.yml files bear flags corresponding to actions for |menu|,
+where |menu| may be dmenu, bemenu, etc
 
 Location:
 ^^^^^^^^^
@@ -14,7 +14,10 @@ Configuration format
 --------------------
 
 Copy `template <launcher_menus/menu-cfgs/template.yml>`__ to
-`menu-cfgs <launcher_menus/menu-cfgs>`__/\<menu\>.yml
+`menu-cfgs <launcher_menus/menu-cfgs>`__/|menu|.yml
+
+.. |menu| replace:: <menu>
+
 
 Edit fields to provide flags:
 
