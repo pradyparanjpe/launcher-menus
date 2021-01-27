@@ -60,6 +60,11 @@ menu() call
 .. autofunction:: launcher_menus.LauncherMenu.__call__
 
 
+themes
+^^^^^^
+.. automodule:: launcher_menus.themes
+   :members:
+
 =========================================
 
 TODO

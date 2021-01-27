@@ -32,6 +32,25 @@ from . import MENUS
 from .errors import FlagNameNotFoundError, CommandError, UsageError
 
 
+def arg2flag(arg: str) -> typing.List[str]:
+    '''
+    Convert argument to flag
+
+    Args:
+       arg: Convert this argument to possible flag
+
+    Returns:
+        A list of possible flags generated from ``arg``
+
+    '''
+    flags = []
+    # arg is of the type flag_name
+    flags.append("--" + arg)  # --flag_name
+    flags.append("--" + arg.replace("_", "-"))  # --flag-name
+    flags.append("-" + arg[0])  # -f  ``THIS MAY BE AMBIGUOUS``
+    return flags
+
+
 def process_comm(cmd: list, pipe_inputs: str = '',
                  timeout: float = None, **kwargs) -> str:
     '''
@@ -49,8 +68,7 @@ def process_comm(cmd: list, pipe_inputs: str = '',
         stdout: str: returned by process
 
     '''
-    try:
-        proc = subprocess.Popen(
+    try: proc = subprocess.Popen(
             cmd,
             universal_newlines=True,
             stdin=subprocess.PIPE,
@@ -73,74 +91,84 @@ def process_comm(cmd: list, pipe_inputs: str = '',
 class LauncherMenu():
     '''
     Launcher Menu wrapper object with pre-defined menu options.
-    Attributes added to this object act as defaults for its menu function.
 
     Args:
-        **kwargs: default values for ``kwargs`` of ``menu`` added as attributes
+        opts: list: options to be offerred by menu.
+        command: command to use {dmenu,bemenu,<custom>}
+        flag_names: dict providing action: flags or path to cognate yaml.
+        fail: 'warn': warn, 'fail': error, 'guess': try creating, else warn
+        **kwargs: default values for ``kwargs`` of ``menu``
 
     Attributes:
+        opts: default options to be offerred
         command: default menu command to run
+        flag_names: dictionary of {actions: flag_names}
+        fail: default failure behaviour
+
+    Raises:
+        TypeError
+        FlagNameNotFoundError
 
     '''
-    def __init__(self, **kwargs) -> None:
-        self.command = None
-        self.menu_args: dict = {}
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+    def __init__(self,
+                 opts: typing.List[str] = None,
+                 command: str = None,
+                 flag_names: typing.Union[pathlib.Path, str, dict] = None,
+                 fail: str = 'warn',
+                 **kwargs) -> None:
+        self.opts = opts
+        self.command = command
+        self.flag_names = self._read_flag_names(flag_names)
+        # ``flag_names`` has two dicts: bool, input
+        # bool flags are only 'flagged' in command line
+        # input flags demand an accompanying input value
+        self.fail = fail
+        # Categorise
+        self.flag_names = self._categorize_flags(self.flag_names)
+        self.kwargs = kwargs
 
-    def __contains__(self, key) -> bool:
-        '''
-        Check if ``key`` is a set attribute
-
-        Args:
-            key: look for ``key`` in self attributes
-
-        Returns:
-            ``True`` if self.key
-            ``False`` otherwise
-        '''
-        if hasattr(self, key):
-            return True
-        return False
-
-    def __call__(self, opts: typing.List[str] = None, command: str = None,
-             config_yml: str = None, fail: bool = False, **flags) -> str:
+    def __call__(self,
+                 opts: typing.List[str] = None, command: str = None,
+                 flag_names: typing.Union[pathlib.Path, str, dict] = None,
+                 fail: str = 'warn',
+                 **kwargs) -> str:
         '''
         Call <command> menu to collect interactive information.
 
         Args:
             opts: list: options to be offerred by menu.
             command: command to use {dmenu,bemenu,<custom>}
-            config_yml: path of yaml config file. Extends & overrides default.
-            fail: ``True`` -> Error, ``False`` -> warn when flag is not found.
-            bottom: bool: show bar at bottom
-            grab: bool: show menu before reading stdin (faster)
-            ignorecase: bool: match items ignoring case
-            wrap: bool: wrap cursor selection (only for bemenu)
-            ifne: bool: display only if opts (bemenu)
-            nooverlap: bool: do not overlap panels (bemenu w/ wayland)
-            lines: int: list opts on vertical 'lines'
-            monitor: int: show menu on (bemenu w/ wayland: -1: all)
-            height: int: height of each menu line (bemenu)
-            index: int: select index automatically (bemenu)
-            prompt: str: prompt string of menu
-            prefix: str: prefix added highlighted item (bemenu)
-            scrollbar: str: display scrollbar [none, always, autohide] (bemenu)
-            font: str: font to be used format: "FONT-NAME [SIZE (bemenu)]"
-            title_background: str: #RRGGBB title background color (bemenu)
-            title_foreground: str:  #RRGGBB title foreground color (bemenu)
-            normal_background: str: #RRGGBB normal background color
-            normal_foreground: str: #RRGGBB normal foreground color
-            filter_background: str: #RRGGBB filter background color (bemenu)
-            filter_foreground: str: #RRGGBB filter foreground color (bemenu)
-            high_background: str: #RRGGBB highlight background color (bemenu)
-            high_foreground: str: #RRGGBB highlight foreground color (bemenu)
-            scroll_background: str: #RRGGBB scrollbar background color (bemenu)
-            scroll_foreground: str: #RRGGBB scrollbar foreground color (bemenu)
-            selected_background: str: #RRGGBB selected background color
-            selected_foreground: str: #RRGGBB selected foreground color
-            windowid: str: embed into windowid (dmenu)
-            **flags: action='-f' for ``command``. Extends & overrides config.
+            flag_names: dict providing action: flags or path to cognate yaml.
+            fail: 'warn': warn, 'fail': error, 'guess': try creating, else warn
+            kwargs: flag to be called at command line:
+
+                - bottom = ``bool``: show bar at bottom
+                - grab = ``bool``: show menu before reading stdin (faster)
+                - ignorecase = ``bool``: match items ignoring case
+                - wrap = ``bool``: wrap cursor selection
+                - ifne = ``bool``: display only if opts
+                - nooverlap = ``bool``: do not overlap panels
+                - lines = ``int``: list opts on vertical 'lines'
+                - monitor = ``int``: show menu on (bemenu w/ wayland: -1: all)
+                - height = ``int``: height of each menu line
+                - index = ``int``: select index automatically
+                - prompt = ``str``: prompt string of menu
+                - prefix = ``str``: prefix added highlighted item
+                - scrollbar = ``str``: display scrollbar {none,always,autohide}
+                - font = ``str``: font to be used format: "FONT-NAME [SIZE ]"
+                - title_background = ``str``: title background color
+                - title_foreground = ``str``: title foreground color
+                - normal_background = ``str``: normal background color
+                - normal_foreground = ``str``: normal foreground color
+                - filter_background = ``str``: filter background color
+                - filter_foreground = ``str``: filter foreground color
+                - high_background = ``str``: highlight background color
+                - high_foreground = ``str``: highlight foreground color
+                - scroll_background = ``str``: scrollbar background color
+                - scroll_foreground = ``str``: scrollbar foreground color
+                - selected_background = ``str``: selected background color
+                - selected_foreground = ``str``: selected foreground color
+                - windowid = ``str``: embed into windowid
 
         Raises:
             CommandError
@@ -149,97 +177,44 @@ class LauncherMenu():
             ValueError: bad scrollbar options
 
         Returns:
-            User's selected or overridden-entered opt from ``opts``
-            else None [Esc]
+            User's selected opt from ``opts`` or overridden-entered choice
+            else ``None`` [Esc]
 
         '''
-        return self._menu(**flags)
+        return self._menu(opts=opts, command=command,
+                          flag_names=flag_names, fail=fail, **kwargs)
 
-    def _menu(self, opts: typing.List[str] = None, command: str = None,
-             config_yml: str = None, fail: bool = False, **flags) -> str:
+    def _menu(self,
+              opts: typing.List[str] = None, command: str = None,
+              flag_names: typing.Union[pathlib.Path, str, dict] = None,
+              fail: str = 'warn',
+              **kwargs) -> str:
         '''
         Call menu
 
         '''
-        bool_kwargs: typing.Dict[str, bool] = {
-            'bottom': None,
-            'grab': None,
-            'ignorecase': None,
-            'wrap': None,
-            'ifne': None,
-            'nooverlap': None,
-        }
-
-        input_kwargs: typing.Dict[str, str] = {
-            'lines': None,
-            'monitor': None,  # may be str, doesn't harm
-            'height': None,
-            'index': None,
-            'prompt': None,
-            'prefix': None,
-            'scrollbar': None,
-            'font': None,
-            'title_background': None,
-            'title_foreground': None,
-            'normal_background': None,
-            'normal_foreground': None,
-            'filter_background': None,
-            'filter_foreground': None,
-            'high_background': None,
-            'high_foreground': None,
-            'scroll_background': None,
-            'scroll_foreground': None,
-            'selected_background': None,
-            'selected_foreground': None,
-            'windowid': None,
-        }
-
-        # parse bool_kwargs
-        for key in bool_kwargs:
-            if key in flags:
-                bool_kwargs[key] = flags[key]
-                del flags[key]
-            elif key in self:
-                bool_kwargs[key] = getattr(self, key)
-
-        # parse input_kwargs
-        for key in input_kwargs:
-            if key in flags:
-                input_kwargs[key] = flags[key]
-                del flags[key]
-            elif key in self:
-                input_kwargs[key] = getattr(self, key)
-
-        # Default command
+        # Command
         command = command or self.command or list(MENUS.keys())[0]
 
-        flag_name = MENUS.get(command) or {}
+        # Flags
+        empty_flags = {'bool': {}, 'input': {}}
+        flag_names = self._read_flag_names(flag_names)
+        for key, value in flag_names.items():
+            flag_names[key] = {**self.flag_names[key],
+                               **MENUS.get(command, empty_flags)[key],
+                               **value}
 
-        # Override default config by supplied config
-        if config_yml is not None and pathlib.Path(config_yml).exists():
-            with open(config_yml, 'r') as yml_handle:
-                flag_name.update(yaml.safe_load(yml_handle))
-                # NEXT: in python3.9, the following
-                # flag_name |= yaml.safe_load(yml_handle)
-
-        # Override config by supplied flags
-        flag_name.update(flags)
-        # NEXT: in python3.9, the following
-        # flag_name |= flags
-
-        # still empty?
-        if not flag_name:
-            warnings.warn(f'No flags {flag_name} found in config nor supplied')
-
+        # Similarly, called options:
+        kwargs = {**self.kwargs, **kwargs}
         cmd = [command]
 
         # boolean flags
-        for key, value in bool_kwargs.items():
-            if value is not None:
+        for key, value in flag_names['bool'].items():
+            if value is not None and key in kwargs and kwargs[key]:
                 try:
-                    cmd.append(flag_name[key])
+                    cmd.append(value)
                 except KeyError as err:
-                    if fail:
+                    if fail == 'fail':
                         raise FlagNameNotFoundError(
                             command, err.args[0]
                         ) from err
@@ -248,10 +223,12 @@ class LauncherMenu():
                         flag name for '{key}' of {command} was not found
                         but not failing
                         ''')
+                        if fail == 'guess':
+                            cmd.append(arg2flag(key))
 
         # input flags
-        for key, value in input_kwargs.items():
-            if value is not None:
+        for key, value in flag_names['input'].items():
+            if value is not None and key in kwargs:
                 if key == 'scrollbar' and value not in ['none',
                                                         'always', 'autohide']:
                     raise ValueError(
@@ -261,7 +238,7 @@ class LauncherMenu():
                         """
                     )
                 try:
-                    cmd.extend((flag_name[key], str(value)))
+                    cmd.extend((value, str(kwargs[key])))
                 except KeyError as err:
                     if fail:
                         raise FlagNameNotFoundError(
@@ -272,7 +249,88 @@ class LauncherMenu():
                         flag name for '{key}' of {command} was not found
                         but not failing
                         ''')
-
+                        if fail == 'guess':
+                            cmd.extend((arg2flag(key), str(value)))
+        # unrecognozed flags
         if opts is None:
             opts = []
+        opts = [str(choice) for choice in opts]
         return process_comm(cmd, pipe_inputs='\n'.join(opts)) or None
+
+    @staticmethod
+    def _read_flag_names(
+            flag_names: typing.Union[pathlib.Path, str, dict],
+    ) -> typing.Dict[str, dict]:
+        '''
+        Interpret type of flag_names
+
+        Args:
+            flag_names: either a yml file or directly a dict
+
+        Raises:
+            FileNotFoundError
+        '''
+        if isinstance(flag_names, dict):
+            return flag_names
+        if flag_names is None:
+            return {'bool': {}, 'input': {}}
+        if isinstance(flag_names, str):
+            flag_path = pathlib.Path(flag_names)
+        elif isinstance(flag_names, pathlib.Path):
+            flag_path = flag_names
+        else:
+            raise TypeError('''flag_names should be either of
+            str, Path, or dict
+            ''')
+        if flag_path.exists():
+            with open(flag_path, 'r') as yml_handle:
+                return yaml.safe_load(yml_handle)
+        raise FileNotFoundError(f"{str(flag_names)} couldn't be located")
+
+    @staticmethod
+    def _categorize_flags(
+            flag_names: typing.Dict[str, dict]
+    ) -> typing.Dict[str, dict]:
+        '''
+        Classify flags into bool, input.
+        If flag is unrecognized, classify based on its value
+
+        Args:
+            flag_names: dictionary to be updated with ``flags``
+            a yaml representation of the structure is below
+            TODO: create a class structure
+
+              flag_names:
+
+                input:
+
+                  act 1: --flag-one
+                  act 2: --flag-two
+                  act 3: --flag-three
+
+                bool:
+
+                  act 4: --flag-four
+                  act 5: --flag-five
+
+        Returns:
+            flag_names:
+                with keys 'input', 'bool'
+                with values: dictionaries, each containing
+                'action' : 'flag' pairs
+        '''
+
+        # Don't mess up the referrence
+        # deep copy
+        altered_flag_names = {}
+        altered_flag_names['bool'] = flag_names['bool'].copy()
+        altered_flag_names['input'] = flag_names['input'].copy()
+        for key, value in flag_names.items():
+            if key not in ('bool', 'input'):
+                # This flag is unrecognized
+                # try to guess its type
+                if isinstance(value, bool):
+                    altered_flag_names['bool'][key] = value
+                else:
+                    altered_flag_names['input'][key] = value
+        return altered_flag_names

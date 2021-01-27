@@ -20,25 +20,42 @@
 
 
 '''
-Python API for Launcher menus
+Launcher Menu Themes
 
 '''
 
 
-from .checks import MENUS
 from .functions import LauncherMenu
-from .errors import (FlagNameNotFoundError, MenuError,
-                     CommandError, UsageError)
-from .themes import menu
 
-__all__ = [
-    'LauncherMenu',
-    'menu',
-    'MenuError',
-    'CommandError',
-    'UsageError',
-    'FlagNameNotFoundError',
-    'MENUS'
-]
 
-__version__ = '21.1.27'
+menu = LauncherMenu()
+'''
+Plain ``menu`` object.
+
+``command`` defaults to the first one found to be installed.
+'''
+
+
+password_prompt = LauncherMenu(
+    filter_background="#000000",
+    filter_foreground="#000000",
+    prompt="Password: "
+)
+'''
+Password prompt menu.
+'''
+
+
+emergency_prompt = LauncherMenu(
+    normal_background="#af1f00",
+    filter_background="#af1f00",
+    selected_background="#50e0ff",
+    normal_foreground="#50e0ff",
+    filter_foreground="#50e0ff",
+    selected_foreground="#af1f00",
+    title_background="#000000",
+    title_foreground="#ffffff",
+)
+'''
+Emergy prompt menu
+'''

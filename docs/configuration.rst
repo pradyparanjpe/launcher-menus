@@ -33,31 +33,34 @@ template.yml
 
 .. code:: yaml
 
-   version:
-   bottom:
-   grab:
-   ignorecase:
-   wrap:
-   ifne:
-   nooverlap:
-   lines:
-   monitor:
-   height:
-   prompt:
-   prefix:
-   index:
-   scrollbar:
-   font:
-   title_background:
-   title_foreground:
-   normal_background:
-   normal_foreground:
-   filter_background:
-   filter_foreground:
-   high_background:
-   high_foreground:
-   scroll_background:
-   scroll_foreground:
-   selected_background:
-   selected_foreground:
-   windowid:
+  bool:
+    bottom: null
+    grab: null
+    wrap: null
+    ifne: null
+    ignorecase: null
+    nooverlap: null
+
+  input:
+    version: null
+    lines: null
+    monitor: null
+    height: null
+    prompt: null
+    prefix: null
+    index: null
+    scrollbar: null
+    font: null
+    title_background: null
+    title_foreground: null
+    normal_background: null
+    normal_foreground: null
+    filter_background: null
+    filter_foreground: null
+    high_background: null
+    high_foreground: null
+    scroll_background: null
+    scroll_foreground: null
+    selected_background: null
+    selected_foreground: null
+    windowid: null
