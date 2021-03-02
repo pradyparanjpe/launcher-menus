@@ -25,20 +25,10 @@ Python API for Launcher menus
 '''
 
 
-from .checks import MENUS
 from .functions import LauncherMenu
-from .errors import (FlagNameNotFoundError, MenuError,
-                     CommandError, UsageError)
+from .errors import MenuError
 from .themes import menu
 
-__all__ = [
-    'LauncherMenu',
-    'menu',
-    'MenuError',
-    'CommandError',
-    'UsageError',
-    'FlagNameNotFoundError',
-    'MENUS'
-]
+__all__ = ['LauncherMenu', 'menu', 'MenuError']
 
-__version__ = '21.1.27'
+__version__ = '21.3.1'

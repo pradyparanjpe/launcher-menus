@@ -58,7 +58,7 @@ def check_installations() -> typing.Dict[str, dict]:
 
     if not avail_menus:
         print('Please install at least one of:')
-        for menu_cmd in known_menus.keys():
+        for menu_cmd in known_menus:
             print(menu_cmd)
         raise FileNotFoundError('no usable menu launchers were found')
     return avail_menus

@@ -57,5 +57,5 @@ emergency_prompt = LauncherMenu(
     title_foreground="#ffffff",
 )
 '''
-Emergy prompt menu
+Emergency prompt menu
 '''

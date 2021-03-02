@@ -23,7 +23,7 @@
 Menu errors
 '''
 
-from . import MENUS
+from .checks import MENUS
 
 
 class MenuError(Exception):
@@ -64,7 +64,7 @@ class CommandError(MenuError):
 
     '''
 
-    def __init__(self, args: list, err: str) -> None:
+    def __init__(self, args: list, err: OSError) -> None:
         super().__init__(
             f'''
             Bad menu command {args}:

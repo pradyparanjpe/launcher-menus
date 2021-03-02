@@ -28,7 +28,7 @@ import pathlib
 import subprocess
 import warnings
 import yaml
-from . import MENUS
+from .checks import MENUS
 from .errors import FlagNameNotFoundError, CommandError, UsageError
 
 
@@ -68,7 +68,8 @@ def process_comm(cmd: list, pipe_inputs: str = '',
         stdout: str: returned by process
 
     '''
-    try: proc = subprocess.Popen(
+    try:
+        proc = subprocess.Popen(
             cmd,
             universal_newlines=True,
             stdin=subprocess.PIPE,
@@ -131,7 +132,7 @@ class LauncherMenu():
                  opts: typing.List[str] = None, command: str = None,
                  flag_names: typing.Union[pathlib.Path, str, dict] = None,
                  fail: str = 'warn',
-                 **kwargs) -> str:
+                 **kwargs) -> typing.Optional[str]:
         '''
         Call <command> menu to collect interactive information.
 
@@ -181,14 +182,14 @@ class LauncherMenu():
             else ``None`` [Esc]
 
         '''
-        return self._menu(opts=opts, command=command,
-                          flag_names=flag_names, fail=fail, **kwargs)
+        return self.menu(opts=opts, command=command,
+                         flag_names=flag_names, fail=fail, **kwargs)
 
-    def _menu(self,
-              opts: typing.List[str] = None, command: str = None,
-              flag_names: typing.Union[pathlib.Path, str, dict] = None,
-              fail: str = 'warn',
-              **kwargs) -> str:
+    def menu(self,
+             opts: typing.List[str] = None, command: str = None,
+             flag_names: typing.Union[pathlib.Path, str, dict] = None,
+             fail: str = 'warn',
+             **kwargs) -> typing.Optional[str]:
         '''
         Call menu
 
@@ -197,7 +198,7 @@ class LauncherMenu():
         command = command or self.command or list(MENUS.keys())[0]
 
         # Flags
-        empty_flags = {'bool': {}, 'input': {}}
+        empty_flags: typing.Dict[str, dict] = {'bool': {}, 'input': {}}
         flag_names = self._read_flag_names(flag_names)
         for key, value in flag_names.items():
             flag_names[key] = {**self.flag_names[key],
@@ -206,25 +207,24 @@ class LauncherMenu():
 
         # Similarly, called options:
         kwargs = {**self.kwargs, **kwargs}
-        cmd = [command]
+        cmd: typing.List[typing.Union[typing.List[str], str]] = [command]
 
         # boolean flags
         for key, value in flag_names['bool'].items():
             if value is not None and key in kwargs and kwargs[key]:
                 try:
-                    cmd.append(value)
+                    cmd.append(value)  # type: ignore
                 except KeyError as err:
                     if fail == 'fail':
                         raise FlagNameNotFoundError(
                             command, err.args[0]
                         ) from err
-                    else:
-                        warnings.warn('''
-                        flag name for '{key}' of {command} was not found
-                        but not failing
-                        ''')
-                        if fail == 'guess':
-                            cmd.append(arg2flag(key))
+                    warnings.warn('''
+                    flag name for '{key}' of {command} was not found
+                    but not failing
+                    ''')
+                    if fail == 'guess':
+                        cmd.append(arg2flag(key))
 
         # input flags
         for key, value in flag_names['input'].items():
@@ -238,28 +238,26 @@ class LauncherMenu():
                         """
                     )
                 try:
-                    cmd.extend((value, str(kwargs[key])))
+                    cmd.extend((value, str(kwargs[key])))  # type: ignore
                 except KeyError as err:
                     if fail:
                         raise FlagNameNotFoundError(
                             command, err.args[0]
                         ) from err
-                    else:
-                        warnings.warn('''
-                        flag name for '{key}' of {command} was not found
-                        but not failing
-                        ''')
-                        if fail == 'guess':
-                            cmd.extend((arg2flag(key), str(value)))
+                    warnings.warn('''
+                    flag name for '{key}' of {command} was not found
+                    but not failing
+                    ''')
+                    if fail == 'guess':
+                        cmd.extend((arg2flag(key), str(value)))
         # unrecognozed flags
-        if opts is None:
-            opts = []
+        opts = opts or []
         opts = [str(choice) for choice in opts]
         return process_comm(cmd, pipe_inputs='\n'.join(opts)) or None
 
     @staticmethod
     def _read_flag_names(
-            flag_names: typing.Union[pathlib.Path, str, dict],
+            flag_names: typing.Union[pathlib.Path, str, dict, None],
     ) -> typing.Dict[str, dict]:
         '''
         Interpret type of flag_names
