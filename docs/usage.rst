@@ -1,14 +1,22 @@
+#######
+USAGE
+#######
+
+**************
+Instructions
+**************
+
 Call ``<menu>``
----------------
+==================
 
-A replacement for input popups.
+Call ``menu`` [``dmenu``, ``bemenu``, ``<others>``] from python script as a replacement for input popups.
 
-Call menu launchers [``dmenu``, ``bemenu``, ``<others>``] from python
 
-Import in your script:
+Basic usage
+-------------
+- Import in script:
 
 .. code:: python
-
 
    # import
    from launcher_menus import menu
@@ -27,7 +35,9 @@ Results:
    a
 
 
-Personalized usage: pre-defined styles
+Fancy usage
+---------------------
+- User-defined styles
 
 .. code:: python
 
@@ -50,3 +60,15 @@ Results:
 ::
 
    Can't go ahead without password
+
+- Pre-defined themes
+
+.. code:: python
+
+   # import
+   from launcher_menus.themes import emergency_prompt, password_prompt
+
+*****************
+Recommendation
+*****************
+- Use user-defined configurations

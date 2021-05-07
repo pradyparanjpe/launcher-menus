@@ -17,18 +17,15 @@
 # You should have received a copy of the GNU General Public License
 # along with launcher-menus.  If not, see <https://www.gnu.org/licenses/>.
 #
-
-
 '''
 Python API for Launcher menus
 
 '''
 
-
-from .functions import LauncherMenu
 from .errors import MenuError
+from .functions import LauncherMenu
 from .themes import menu
 
 __all__ = ['LauncherMenu', 'menu', 'MenuError']
 
-__version__ = '21.3.1'
+__version__ = '1!1.0.0'

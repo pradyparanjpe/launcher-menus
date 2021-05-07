@@ -137,11 +137,11 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# pypi upload script
-pypi.sh
-
 # built documentation
 docs/_*
 
-# Original README.org -> pandoc -> README.md
-README.org
+# vim linters, etc
+.vim/*
+
+# coding aids
+/code-aid

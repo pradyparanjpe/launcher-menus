@@ -11,6 +11,14 @@ Welcome to launcher-menus' documentation!
    :caption: Contents:
 
 
+   README
+   INSTALL
+   configure
+   usage
+   source-code-doc
+   todo.rst
+
+
 Indices and tables
 ==================
 
@@ -18,56 +26,3 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
------------------------------------------
-
-.. mdinclude:: ../README.md
-
------------------------------------------
-
-
-Installation
-============
-
-.. mdinclude:: ../INSTALL.md
-
------------------------------------------
-
-
-Usage
-=====
-
-.. include:: usage.rst
-
------------------------------------------
-
-
-Configuration
-=============
-
-.. include:: configuration.rst
-
-=========================================
-
-
-launcher-menus
-==============
-.. automodule:: launcher_menus
-   :members:
-
-menu() call
------------
-
-.. autofunction:: launcher_menus.LauncherMenu.__call__
-
-
-themes
-^^^^^^
-.. automodule:: launcher_menus.themes
-   :members:
-
-=========================================
-
-TODO
-=====
-
-.. include:: todo.rst

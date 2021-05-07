@@ -17,22 +17,24 @@
 # You should have received a copy of the GNU General Public License
 # along with launcher-menus.  If not, see <https://www.gnu.org/licenses/>.
 #
-
 '''
 Menu object and function
 '''
 
+import os
 import re
-import typing
-import pathlib
 import subprocess
 import warnings
+from pathlib import Path
+from typing import Dict, List, Optional, Union
+
 import yaml
+
 from .checks import MENUS
-from .errors import FlagNameNotFoundError, CommandError, UsageError
+from .errors import CommandError, FlagNameNotFoundError, UsageError
 
 
-def arg2flag(arg: str) -> typing.List[str]:
+def arg2flag(arg: str) -> List[str]:
     '''
     Convert argument to flag
 
@@ -51,8 +53,10 @@ def arg2flag(arg: str) -> typing.List[str]:
     return flags
 
 
-def process_comm(cmd: list, pipe_inputs: str = '',
-                 timeout: float = None, **kwargs) -> str:
+def process_comm(cmd: list,
+                 pipe_inputs: str = '',
+                 timeout: float = None,
+                 **kwargs) -> str:
     '''
     Args:
         cmd: list form of commands to be passed to Popen as args
@@ -69,15 +73,13 @@ def process_comm(cmd: list, pipe_inputs: str = '',
 
     '''
     try:
-        proc = subprocess.Popen(
-            cmd,
-            universal_newlines=True,
-            stdin=subprocess.PIPE,
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            **kwargs
-            )
+        proc = subprocess.Popen(cmd,
+                                universal_newlines=True,
+                                stdin=subprocess.PIPE,
+                                stdout=subprocess.PIPE,
+                                stderr=subprocess.PIPE,
+                                text=True,
+                                **kwargs)
     except OSError as err:
         raise CommandError(cmd, err) from err
 
@@ -112,9 +114,9 @@ class LauncherMenu():
 
     '''
     def __init__(self,
-                 opts: typing.List[str] = None,
+                 opts: List[str] = None,
                  command: str = None,
-                 flag_names: typing.Union[pathlib.Path, str, dict] = None,
+                 flag_names: Union[os.PathLike, dict] = None,
                  fail: str = 'warn',
                  **kwargs) -> None:
         self.opts = opts
@@ -129,10 +131,11 @@ class LauncherMenu():
         self.kwargs = kwargs
 
     def __call__(self,
-                 opts: typing.List[str] = None, command: str = None,
-                 flag_names: typing.Union[pathlib.Path, str, dict] = None,
+                 opts: List[str] = None,
+                 command: str = None,
+                 flag_names: Union[os.PathLike, dict] = None,
                  fail: str = 'warn',
-                 **kwargs) -> typing.Optional[str]:
+                 **kwargs) -> Optional[str]:
         '''
         Call <command> menu to collect interactive information.
 
@@ -182,14 +185,18 @@ class LauncherMenu():
             else ``None`` [Esc]
 
         '''
-        return self.menu(opts=opts, command=command,
-                         flag_names=flag_names, fail=fail, **kwargs)
+        return self.menu(opts=opts,
+                         command=command,
+                         flag_names=flag_names,
+                         fail=fail,
+                         **kwargs)
 
     def menu(self,
-             opts: typing.List[str] = None, command: str = None,
-             flag_names: typing.Union[pathlib.Path, str, dict] = None,
+             opts: List[str] = None,
+             command: str = None,
+             flag_names: Union[os.PathLike, dict] = None,
              fail: str = 'warn',
-             **kwargs) -> typing.Optional[str]:
+             **kwargs) -> Optional[str]:
         '''
         Call menu
 
@@ -198,16 +205,18 @@ class LauncherMenu():
         command = command or self.command or list(MENUS.keys())[0]
 
         # Flags
-        empty_flags: typing.Dict[str, dict] = {'bool': {}, 'input': {}}
+        empty_flags: Dict[str, dict] = {'bool': {}, 'input': {}}
         flag_names = self._read_flag_names(flag_names)
         for key, value in flag_names.items():
-            flag_names[key] = {**self.flag_names[key],
-                               **MENUS.get(command, empty_flags)[key],
-                               **value}
+            flag_names[key] = {
+                **self.flag_names[key],
+                **MENUS.get(command, empty_flags)[key],
+                **value
+            }
 
         # Similarly, called options:
         kwargs = {**self.kwargs, **kwargs}
-        cmd: typing.List[typing.Union[typing.List[str], str]] = [command]
+        cmd: List[Union[List[str], str]] = [command]
 
         # boolean flags
         for key, value in flag_names['bool'].items():
@@ -216,9 +225,8 @@ class LauncherMenu():
                     cmd.append(value)  # type: ignore
                 except KeyError as err:
                     if fail == 'fail':
-                        raise FlagNameNotFoundError(
-                            command, err.args[0]
-                        ) from err
+                        raise FlagNameNotFoundError(command,
+                                                    err.args[0]) from err
                     warnings.warn('''
                     flag name for '{key}' of {command} was not found
                     but not failing
@@ -229,21 +237,19 @@ class LauncherMenu():
         # input flags
         for key, value in flag_names['input'].items():
             if value is not None and key in kwargs:
-                if key == 'scrollbar' and value not in ['none',
-                                                        'always', 'autohide']:
-                    raise ValueError(
-                        f"""
+                if key == 'scrollbar' and value not in [
+                        'none', 'always', 'autohide'
+                ]:
+                    raise ValueError(f"""
                         scrollbar should be in ['none', 'always', 'autohide'],
                         got {value}
-                        """
-                    )
+                        """)
                 try:
                     cmd.extend((value, str(kwargs[key])))  # type: ignore
                 except KeyError as err:
                     if fail:
-                        raise FlagNameNotFoundError(
-                            command, err.args[0]
-                        ) from err
+                        raise FlagNameNotFoundError(command,
+                                                    err.args[0]) from err
                     warnings.warn('''
                     flag name for '{key}' of {command} was not found
                     but not failing
@@ -257,8 +263,7 @@ class LauncherMenu():
 
     @staticmethod
     def _read_flag_names(
-            flag_names: typing.Union[pathlib.Path, str, dict, None],
-    ) -> typing.Dict[str, dict]:
+        flag_names: Union[os.PathLike, dict, None], ) -> Dict[str, dict]:
         '''
         Interpret type of flag_names
 
@@ -272,23 +277,16 @@ class LauncherMenu():
             return flag_names
         if flag_names is None:
             return {'bool': {}, 'input': {}}
-        if isinstance(flag_names, str):
-            flag_path = pathlib.Path(flag_names)
-        elif isinstance(flag_names, pathlib.Path):
-            flag_path = flag_names
-        else:
-            raise TypeError('''flag_names should be either of
-            str, Path, or dict
+        if not isinstance(flag_names, os.PathLike):
+            raise TypeError('''
+            flag_names should be either of
+            str or dict
             ''')
-        if flag_path.exists():
-            with open(flag_path, 'r') as yml_handle:
-                return yaml.safe_load(yml_handle)
-        raise FileNotFoundError(f"{str(flag_names)} couldn't be located")
+        with open(flag_names, 'r') as yml_handle:
+            return yaml.safe_load(yml_handle)
 
     @staticmethod
-    def _categorize_flags(
-            flag_names: typing.Dict[str, dict]
-    ) -> typing.Dict[str, dict]:
+    def _categorize_flags(flag_names: Dict[str, dict]) -> Dict[str, dict]:
         '''
         Classify flags into bool, input.
         If flag is unrecognized, classify based on its value

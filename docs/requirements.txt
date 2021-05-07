@@ -2,5 +2,5 @@
 
 sphinx
 sphinx_rtd_theme
-sphinx-autodoc-typehints
-m2r2
+sphinx_autodoc_typehints
+sphinx-argparse

@@ -17,8 +17,6 @@
 # You should have received a copy of the GNU General Public License
 # along with launcher-menus.  If not, see <https://www.gnu.org/licenses/>.
 #
-
-
 '''
 Menu errors
 '''
@@ -42,16 +40,13 @@ class FlagNameNotFoundError(MenuError):
         flag: flag that was not identified from yml file.
 
     '''
-
     def __init__(self, command: str, flag: str) -> None:
-        super().__init__(
-            f'''
+        super().__init__(f'''
             flag name for '{flag}' of {command} was not found
             in '**flags'
             nor in the supplied 'config_yml' (if any)
             nor in default configuration file {command}.yml (if any)
-            '''
-        )
+            ''')
 
 
 class CommandError(MenuError):
@@ -63,18 +58,15 @@ class CommandError(MenuError):
         err: error raised by <menu> command.
 
     '''
-
-    def __init__(self, args: list, err: OSError) -> None:
-        super().__init__(
-            f'''
+    def __init__(self, args: list, err: str) -> None:
+        super().__init__(f'''
             Bad menu command {args}:
 
             {err}
 
             Menus available:
             {MENUS.keys()}
-            '''
-        )
+        ''')
 
 
 class UsageError(MenuError):
@@ -85,12 +77,9 @@ class UsageError(MenuError):
         args: args called with <menu> command.
         err: error raised by <menu> command.
     '''
-
     def __init__(self, args: list, err: str) -> None:
-        super().__init__(
-            f'''
+        super().__init__(f'''
             Bad menu usage {args}:
 
             {err}
-            '''
-        )
+            ''')

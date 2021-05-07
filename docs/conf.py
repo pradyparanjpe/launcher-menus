@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8; mode: python; -*-
 # Configuration file for the Sphinx documentation builder.
 #
 # This file only contains a selection of the most common options. For a full
@@ -14,10 +12,10 @@
 #
 import os
 import sys
-sys.path.insert(0, os.path.abspath('../launcher_menus/'))
-import sphinx_rtd_theme
-import m2r2
 
+import sphinx_rtd_theme
+
+sys.path.insert(0, os.path.abspath('..'))
 
 # -- Project information -----------------------------------------------------
 
@@ -26,8 +24,7 @@ copyright = '2021, Pradyumna Paranjape'
 author = 'Pradyumna Paranjape'
 
 # The full version, including alpha/beta/rc tags
-release = '21.3.1'
-
+release = '1!1.0.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -35,9 +32,9 @@ release = '21.3.1'
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
 extensions = [
-    'sphinx.ext.todo', 'sphinx.ext.autodoc', 'sphinx.ext.napoleon',
-    'sphinx.ext.viewcode', 'sphinx_rtd_theme', "sphinx_autodoc_typehints",
-    'm2r2'
+    'sphinx.ext.todo', 'sphinx.ext.autodoc', 'sphinx.ext.viewcode',
+    'sphinx.ext.napoleon', 'sphinx_rtd_theme', 'sphinx_autodoc_typehints',
+    'sphinxarg.ext'
 ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -47,7 +44,6 @@ templates_path = ['_templates']
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-
 
 # -- Options for HTML output -------------------------------------------------
 

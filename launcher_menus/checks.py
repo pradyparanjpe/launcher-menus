@@ -17,21 +17,21 @@
 # You should have received a copy of the GNU General Public License
 # along with launcher-menus.  If not, see <https://www.gnu.org/licenses/>.
 #
-
-
 '''
 Installation Checks
 
 '''
 
-
 import os
-import typing
-import subprocess
+import shutil
+from pathlib import Path
+from typing import Dict
+
 from .read_config import flag_names_from_file
 
 
-def check_installations() -> typing.Dict[str, dict]:
+def check_installations(
+        custom_config: Path = None) -> Dict[str, Dict[str, str]]:
     '''
     check available installations:
     fetch <menu>.yml configurations [bemenu, dmenu],
@@ -44,15 +44,13 @@ def check_installations() -> typing.Dict[str, dict]:
         FileNotFoundError: no launcher menus could be located
 
     '''
-    known_menus = flag_names_from_file()
-    avail_menus: typing.Dict[str, dict] = {}
+    known_menus = flag_names_from_file(custom_config)
+    avail_menus: Dict[str, Dict[str, str]] = {}
     for menu_cmd, flags in known_menus.items():
         if os.environ.get("READTHEDOCS"):
             # RTD virutal environment
             return avail_menus
-        if not subprocess.call(['command', '-v', menu_cmd],
-                               stdout=subprocess.DEVNULL,
-                               stderr=subprocess.DEVNULL):
+        if shutil.which(menu_cmd):
             # call didn't return an exit-code
             avail_menus[menu_cmd] = flags
 
@@ -64,7 +62,7 @@ def check_installations() -> typing.Dict[str, dict]:
     return avail_menus
 
 
-MENUS: typing.Dict[str, dict] = check_installations()
+MENUS: Dict[str, dict] = check_installations()
 '''
 Configuration for menus known and found to be installed
 '''
